@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appl    ication</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>
+        Welcome to the books application
+    </h1>
+    <button class="btn btn-info">
+        <a href="./createbook.html">Add Book</a>
+    </button>
+    <br>
+    <br>
+        <table id="booksTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>IsFree</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Data is dynamically populated here from the backend API-->
+            </tbody>
+        </table>
+    
+    <script>
+        //promise chaining using . notation
+            fetch('http://localhost:8080/api/v1/book/books') //fetch is asynchronous and returns a promise
+                .then(response => response.json()) //promise is resolved we go to then
+                .then(data => {
+                    const tableBody = document.querySelector('#booksTable tbody');
+                    data.forEach(book => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${book.isbn}</td>
+                            <td>${book.title}</td>
+                            <td>${book.price}</td>
+                            <td>${book.isFree ? 'Yes' : 'No'}</td>
+                            <td><button class="btn btn-success" onclick="updateBook(${book.isbn})">
+                                <a href="./updateBook.html?isbn=${book.isbn}"> 
+                                    Edit    
+                                </a>
+                                </button></td>
+                            <td><button class="btn btn-danger" onclick="deleteBook(${book.isbn})">Delete</button></td>                                
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error)); //promise is rejected or any errors we go to catch
+    // ? this passes data as query parameter in the URL
+            function deleteBook(isbn) {
+                fetch(`http://localhost:8080/api/v1/book/${isbn}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                })
+                .then(response => {
+                    console.log("Book with isbn" + isbn + " Successfully Deleted");
+                    alert('book successfully deleted');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log("Error deleting book", error);
+                    alert('Error Deleting book with isbn ', isbn)
+                })
+            }
+
+
+    
+    </script>
+</body>
+</html>

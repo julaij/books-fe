@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Author</title>
+</head>
+
+<body>
+    <h1>Welcome to the create author page</h1>
+    <form>
+        <label for="authorId">Enter AuthorId</label>
+        <input type="number" id="authorId" name="authorId" required>
+        <br>
+        <label for="firstName">Enter FirstName</label>
+        <input type="string" id="firstName" name="firstName" required>
+        <br>
+        <label for="phoneNumber">Enter PhoneNumber</label>
+        <input type="number" id="phoneNumber" name="phoneNumber" required>
+        <br>
+        <label for="genre">Enter Genre</label>
+        <input type="string" id="genre" name="genre" required>
+
+        <br>
+        <br>
+        <button type="Submit" onclick="createAuthor(event)">Create Author</button>
+    </form>
+    <script>
+        function createAuthor(event) {
+            event.preventDefault();
+
+            // collecting form data
+            const authorId = document.getElementById('authorId').value;
+            const firstName = document.getElementById('firstName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const genre = document.getElementById('genre').value;
+
+            //creating Author object for Post Methods to send a payload
+            //constructing Json object here
+
+            const author = {
+                authorId: authorId,
+                firstName: firstName,
+                phoneNumber: phoneNumber,
+                genre: genre
+
+            };
+
+            //sending the post request to the server
+            fetch('http://localhost:8080/api/v1/author/authors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'Application/Json'
+
+                },
+                body: JSON.stringify(author)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success', data);
+                    alert('Author added successfully!');
+                })
+
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Failed to add author');
+                });
+        }
+
+
+    </script>
+
+</body>
+
+</html>

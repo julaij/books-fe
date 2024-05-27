@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Application </title>
+</head>
+<body>
+    <h1>Welcome to the Author Application</h1>
+   
+    <button><a href="./createauthor.html">Add author</a></button>
+    
+    <table style="margin-top: 10px;" id = "authorTable" border="1">
+        <thead>
+            <tr>
+                <th>Author Id</th>
+                <th>First Name</th>
+                <th>Phone Number</th>
+                <th>Genre</th>
+                <th>Update</th>
+                <th>Delete</th>
+
+            </tr>
+        </thead>
+        <tbody>
+           
+                <!--Data will be appended here dynamically-->
+        </tbody>
+    </table>
+
+    <script>
+        fetch('http://localhost:8080/api/v1/author/authors')
+        .then(response => response.json())
+        .then(data => {
+         const tableBody =  document.querySelector('#authorTable tbody');
+         data.forEach(author => {
+            const row = document.createElement('tr')
+            row.innerHTML = `
+            <td>${author.authorId}</td>
+            <td>${author.firstName}</td>
+            <td>${author.phoneNumber}</td>
+            <td>${author.genre}</td>
+            <td><button onclick="updateAuthor(${author.authorId})" >
+                <a href="./updateAuthor.html?authorId=${author.authorId}">
+                Edit
+                </a>
+                </button></td>
+            <td><button onclick="deleteAuthor(${author.authorId})">Delete</button></td>
+            `;
+            tableBody.appendChild(row);
+         });
+        })
+        .catch(error => console.error('Error Fetching data:', error));
+
+        function deleteAuthor(authorId){
+           fetch(`http://localhost:8080/api/v1/author/${authorId}`,{
+            method: 'DELETE',
+            headers: {
+                    'Content-Type': 'application/json'
+                }
+           })
+           .then(response =>{
+            console.log("Successfully Deleted Author", response);
+            alert("Successfully Deleted Author");
+            window.location.reload();
+           }) 
+           .catch(error =>{
+            console.log("Error deleting author", error);
+            alert("Error deleting author");
+           })
+
+        }
+        
+
+        
+
+    </script>
+    
+</body>
+</html>
