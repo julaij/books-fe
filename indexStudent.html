@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Application</title>
+
+    <!-- Include jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Then include Bootstrap's JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <h1 style="color: aqua;"><i>Welcome To The Student Application</i></h1>
+    <button class="btn btn-info">
+        <a href="./createstudent.html">Add Student</a>
+    </button>
+    <br>
+    <table id="studentsTable" class="table table-striped">
+        <thead>
+            <tr>
+                <br>
+                <th>Student Id</th>
+                <th>Student Name</th>
+                <th>Email Id</th>
+                <th>Major</th>
+                <th>Book Id</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        fetch('http://localhost:8080/api/v1/student/students')
+        .then(response => response.json())
+        .then(data =>{
+            const tableBody = document.querySelector('#studentsTable tbody');
+            if(tableBody) {
+                    data.forEach(student => {
+                        const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${student.studentId}</td>
+            <td>${student.studentName}</td>
+            <td>${student.emailId}</td>
+            <td>${student.major}</td>
+            <td>${student.bookId}</td>              
+            <td><button class="btn btn-success" onclick="updateStudent(${student.studentId})">
+                                <a href="./updateStudent.html?isbn=${student.studentId}"> 
+                                    Edit    
+                                </a>
+                                </button></td>
+                            <td><button class="btn btn-danger" onclick="deleteStudent(${student.studentId})">Delete</button></td>                                
+                        `;
+                tableBody.appendChild(row);
+
+          });
+        }else{
+            console.log('Table body element not found');
+        }
+        })
+        .catch(error => console.log('Error Fetching Data', error));
+
+        function deleteStudent(studentId){
+            fetch(`http://localhost:8080/api/v1/student/${studentId}`,{
+              method:'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+            }
+            })
+            .then(response => {
+                console.log("Successfully Deleted Student", response);
+                alert("Successfully Deleted Student");
+                window.location.reload();
+            })
+            .catch(error =>{
+                console.log("Error Deleting Student", error);
+                alert("Error Deleting Student");
+            });
+        }
+
+        function updateStudent(studentId) {
+            window.location.href = `./updateStudent.html?studentId=${studentId}`;
+        }
+
+
+
+    </script>
+    
+</body>
+</html>

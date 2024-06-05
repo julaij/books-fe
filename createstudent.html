@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Student</title>
+</head>
+<body>
+    <h1 style="color: darkgreen;"><i>Welcome To The Student Page</i></h1>
+    <form id="createStudentForm">
+        <br>
+        <label for="studentId">Enter StudentId</label>
+        <input type="number" id="studentId" name="studentId" required>
+
+        <br>
+        <label for="studentName">Enter StudentName</label>
+        <input type="text" id="studentName" name="studentName" required>
+
+        <br>
+        <label for="emailId">Enter EmailId</label>
+        <input type="text" id="emailId" name="emailId" required>
+
+        <br>
+        <label for="major">Enter Major</label>
+        <input type="text" id="major" name="major" required>
+
+        <br>
+        
+        <label for="bookId">Enter BookId</label>
+        <input type="Long" id="bookId" name="bookId" required>
+        <br>
+        <br>
+        <button type="submit" onclick="createStudent(event)" style="background-color: green; color: white;">Create Student</button>
+
+    </form>
+
+    <script>
+        function createStudent(event){
+            event.preventDefault();
+
+            const studentId = document.getElementById('studentId').value;
+            const studentName = document.getElementById('studentName').value;
+            const emailId = document.getElementById('emailId').value;
+            const major = document.getElementById('major').value;
+            const bookId = document.getElementById('bookId').value;
+
+            const student = {
+                studentId: studentId,
+                studentName: studentName,
+                emailId: emailId,
+                major: major,
+                bookId: bookId
+
+            };
+
+            fetch('http://localhost:8080/api/v1/student/students',{
+                method:'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(student)
+            })
+            .then(response => response.json())
+            .then(data =>{
+                console.log('Success:', data);
+                alert('Student added successfully!');
+            })
+            .catch(error =>{
+                console.log("Error",error);
+                alert("Failed to add student");
+            });
+
+        }
+
+
+
+
+
+
+        
+    </script>
+</body>
+</html>

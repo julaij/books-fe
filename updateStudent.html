@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Update Page </title>
+</head>
+<body>
+    <h1 style="color: rgb(255, 0, 132);"><i>**Welcome To The Student Update Page**</i></h1>
+
+    <form id="updateForm">
+        <br>
+        <label for="studentId">Enter Student Id</label>
+        <input type="number" id="studentId" name="studentId" required>
+
+        <br>
+        <label for="studentName">Enter Student Name</label>
+        <input type="text" id="studentName" name="studentName" required>
+
+        <br>
+        <label for="emailId">Enter Email Id</label>
+        <input type="text" id="emailId" name="emailId" required>
+
+        <br>
+        <label for="major">Enter Major</label>
+        <input type="text" id="major" name="major" required>
+
+        <br>
+        <label for="bookId">Enter Book Id</label>
+        <input type="number" id="bookId" name="bookId" required>
+
+        <br>
+        <br>
+        <button type="submit" onclick="submitUpdate(event)" style="background-color: yellow; color:black">Update Student</button>
+        <button type="button" onclick="cancelUpdate(event)" style="background-color: blue; color: aliceblue;">Cancel</button>
+
+
+    </form>
+
+    <script>
+        let student = {};
+
+        function getQueryParam(param){
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function populateForm(studentId){
+            fetch(`http://localhost:8080/api/v1/student/${studentId}`)
+            .then(response => response.json())
+            .then(data =>{
+                student = data;
+                document.getElementById('studentId').value = student.studentId;
+                document.getElementById('studentName').value = student.studentName;
+                document.getElementById('emailId').value = student.emailId;
+                document.getElementById('major').value = student.major;
+                document.getElementById('bookId').value = student.bookId;
+            })
+
+            .catch(error => console.error('Error Fetching Student Data', error));
+        }
+
+        function submitUpdate(event){
+            event.preventDefault();
+
+            student.studentName = document.getElementById('studentName').value;
+            student.emailId = document.getElementById('emailId').value;
+            student.major = document.getElementById('major').value;
+            student.bookId = document.getElementById('bookId').value;
+
+            fetch(`http://localhost:8080/api/v1/student/${student.studentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(student)
+            })
+            .then(response => response.json())
+            .then(data =>{
+                console.log('Success', data);
+                alert('Student Updated Successfully');
+            })
+            
+            .catch(error =>{
+              console.error('Error Updating Student', error);
+              alert('Failed to Update Student');  
+            });
+
+            console.log('Update Form Submitted');
+        };
+
+        function cancelUpdate(){
+            window.location.href = 'indexStudent.html';
+        }
+
+        const studentId = getQueryParam('studentId');
+        if (studentId) { //if isbn is truthy -->has some value in it
+            populateForm(studentId);
+        } else {
+            console.error('No Student Id found in URL');
+        }
+
+
+            
+            
+
+        
+
+    </script>
+    
+</body>
+</html>
